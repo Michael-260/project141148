@@ -133,7 +133,7 @@ void Dijkstra(mnet& n) {
 			
 			if (!B[j] && Dist[tem] + n.getlineById(tem,j) < Dist[j]) {
 				Dist[j] = Dist[tem] + n.getlineById(tem, j);
-				
+				path.push_back(tem);
 			}
 		}
 	}

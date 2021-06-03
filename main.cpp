@@ -9,7 +9,7 @@ int main() {
 	cout << "请输入所有点的名字（不分先后顺序）：\n";
 	for (int i = 0; i < num; ++i) { cin >> a; name.push_back(a); } net1.setpoint(name);
 	for (int i = 0; i < linenum; ++i) {
-		cout << "请输入有向线段信息：\n";
+		cout << "请输入有向线段信息（" << i + 1 << "/" << linenum << "）：\n";
 		cin >> a >> b >> x; net1.addline(a, b, x);
 	}
 	cout << net1 << "请输入起点名：\n"; cin >> a;

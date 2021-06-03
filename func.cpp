@@ -4,7 +4,7 @@ ostream& operator<<(ostream& output, mnet& net) {
 	for (; it != net.netpoint.end(); ++it) {
 		output << "id:" << it->id << " name:" << it->name;
 		for (vector<int>::iterator iit = it->nearbyid.begin(); iit != it->nearbyid.end(); ++iit) {
-			output << " id:" << *iit;
+			output << " name:" << net.findById(*iit)->name;
 		}
 		output << endl;
 	}
@@ -37,6 +37,7 @@ vector<mpoint>::iterator mnet:: findById(int id) {
 	}
 	return result;
 }
+//根据点名返回迭代器
 vector<mpoint>::iterator mnet::findByName(string pname) {
 	vector<mpoint>::iterator result = netpoint.begin();
 	for (; result != netpoint.end(); ++result) {
@@ -217,30 +218,3 @@ void test() {
 	max = max + 100;
 	cout << max << endl << DBL_MAX;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	/*vector<mpoint>::iterator itp = n.netpoint.begin(), start, temp;
-	vector<int>::iterator iteint; vector<int> index;
-	vector<double>::iterator itedoub;
-	int begin = 1, pointnumber = n.netpoint.size();
-	start = n.findById(begin);
-	double temlen = *(start->length.begin()) + 1.0;
-	while (1) {
-		temp = n.findMin(begin); index.push_back(temp->id);
-	}*/

@@ -65,7 +65,6 @@ void mnet::addpoint(int pid, vector<int>& pnid, vector<double>& plen) {
 }
 void mnet::addline(int pid, int nearid, double len) {
 	vector<mpoint>::iterator itep = findById(pid);
-	//若输出mnet中点的nearbyid属性首元素为-1则该点没有经过赋值，或者说不是任意线段的起点
 	itep->nearbyid.push_back(nearid);
 	itep->length.push_back(len);
 	line tem(pid, nearid, len);
@@ -109,16 +108,22 @@ bool mnet::lineexist(int a, int b) {
 	}
 	return false;
 }
-void Dijkstra(mnet& n) {
-	int begin = 0, pnum = n.netpoint.size();//开始点号，总点数
-	vector<int> S, path; S.push_back(begin);//for (int i = 0; i < pnum; ++i)S.push_back(i);
+void Dijkstra(mnet& n,int begin) {
+	int pnum = n.netpoint.size();//开始点号，总点数
+	vector<int> S, path; for (int i = 0; i < pnum; ++i)S.push_back(-1);
 	vector<bool>B; for (int i = 0; i < pnum; ++i)B.push_back(false);
-	
 	double* Dist = new double[pnum]; int tem = 0;
 	
 	B[begin] = true;
 	for (int i = 0; i < pnum; ++i) {
 		Dist[i] = n.getlineById(begin, i);
+		if (Dist[i] > 0 && Dist[i] < DBL_MAX) {
+			S[i] = begin;
+		}
+		else
+		{
+			S[i] = -1;
+		}
 	}
 
 	for (int i = 0; i < pnum; ++i) {
@@ -128,20 +133,37 @@ void Dijkstra(mnet& n) {
 				tem = j; min = Dist[j];
 			}
 		}
-		B[tem] = true;S.push_back(tem);
+		B[tem] = true;
 		for (int j = 0; j < pnum; ++j) {
 			
 			if (!B[j] && Dist[tem] + n.getlineById(tem,j) < Dist[j]) {
 				Dist[j] = Dist[tem] + n.getlineById(tem, j);
-				path.push_back(tem);
+				S[j] = tem;
 			}
 		}
 	}
-	for (size_t i = 0; i < S.size(); ++i) {
-		cout << S[i] << endl;
+	for (int i = 0; i < pnum; ++i) {
+		string re = "";
+		if (i == begin)continue;
+		cout << "第" << i << "个点：";
+		if (Dist[i] == DBL_MAX)cout << "     无法到达\n";
+		else {
+			returnstep(S, i, re); re = re + to_string(i);
+			cout << re << "     距离：" << Dist[i] << endl;
+		}
 	}
 }
 	
+void returnstep(vector<int>& input, int a, string& result) {
+	if (input[a] == -1)return;
+	returnstep(input, input[a], result);
+	result = result + to_string(input[a]) + "->";
+}
+void returnstep(vector<int>& input, int a, vector<int>& pa) {
+	if (input[a] == -1)return;
+	returnstep(input, input[a], pa);
+	pa.push_back(input[a]);
+}
 void test() {
 	double max = DBL_MAX;
 	max = max + 100;

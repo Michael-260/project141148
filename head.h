@@ -58,5 +58,6 @@ public:
 	vector<mpoint>::iterator findMin(int id);
 };
 
-void Dijkstra(mnet&);
+void Dijkstra(mnet&,int);
+void returnstep(vector<int>&, int, string&);
 void test();

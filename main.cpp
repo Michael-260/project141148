@@ -11,11 +11,11 @@ int main() {
 	for (int i = 0; i < linenum; ++i) {
 		cout << "请输入有向线段信息：\n";
 		cin >> a >> b >> x; net1.addline(a, b, x);
-		cout << net1;
 	}
-	cout << "请输入起点名：\n"; cin >> a;
+	cout << net1 << "请输入起点名：\n"; cin >> a;
 	cout << "开始Dijkstra最短路径计算：\n";
 	Dijkstra(net1, a);
+	system("pause");
 	return 0;
 	
 	/*int num = 6;

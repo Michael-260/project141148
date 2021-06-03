@@ -59,3 +59,4 @@ public:
 };
 
 void Dijkstra(mnet&);
+void test();

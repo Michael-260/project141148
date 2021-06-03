@@ -130,7 +130,6 @@ void Dijkstra(mnet& n) {
 		}
 		B[tem] = true;S.push_back(tem);
 		for (int j = 0; j < pnum; ++j) {
-			path.push_back(begin);
 			
 			if (!B[j] && Dist[tem] + n.getlineById(tem,j) < Dist[j]) {
 				Dist[j] = Dist[tem] + n.getlineById(tem, j);
@@ -143,6 +142,11 @@ void Dijkstra(mnet& n) {
 	}
 }
 	
+void test() {
+	double max = DBL_MAX;
+	max = max + 100;
+	cout << max << endl << DBL_MAX;
+}
 
 
 

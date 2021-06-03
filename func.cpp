@@ -70,6 +70,14 @@ void mnet::addline(int pid, int nearid, double len) {
 	line tem(pid, nearid, len);
 	netline.push_back(tem);
 }
+void mnet::addline(string a,string b, double len) {
+	vector<mpoint>::iterator itep1 = findByName(a);
+	vector<mpoint>::iterator itep2 = findByName(b);
+	itep1->nearbyid.push_back(itep2->id);
+	itep1->length.push_back(len);
+	line tem(itep1->id, itep2->id, len);
+	netline.push_back(tem);
+}
 void mnet::setpoint(int pid, vector<int>& pnid, vector<double>& plen) {
 	vector<mpoint>::iterator setit = netpoint.begin();
 	for (; setit != netpoint.end(); ++setit) {
@@ -78,6 +86,11 @@ void mnet::setpoint(int pid, vector<int>& pnid, vector<double>& plen) {
 		}
 	}
 	pnid.clear(); plen.clear();
+}
+void mnet::setpoint(vector<string>& name) {
+	for (size_t i = 0; i < netpoint.size(); ++i) {
+		netpoint[i].name = name[i];
+	}
 }
 void mnet::clean() {
 	netpoint.shrink_to_fit();
@@ -108,24 +121,28 @@ bool mnet::lineexist(int a, int b) {
 	}
 	return false;
 }
+void returnstep(vector<int>& input, int a, string& result) {
+	if (input[a] == -1)return;
+	returnstep(input, input[a], result);
+	result = result + to_string(input[a]) + "->";
+}
+void returnstep(vector<int>& input, int a, vector<int>& pa) {
+	if (input[a] == -1)return;
+	returnstep(input, input[a], pa);
+	pa.push_back(input[a]);
+}
 void Dijkstra(mnet& n,int begin) {
 	int pnum = n.netpoint.size();//开始点号，总点数
-	vector<int> S, path; for (int i = 0; i < pnum; ++i)S.push_back(-1);
+	vector<int> S; for (int i = 0; i < pnum; ++i)S.push_back(-1);
 	vector<bool>B; for (int i = 0; i < pnum; ++i)B.push_back(false);
-	double* Dist = new double[pnum]; int tem = 0;
-	
-	B[begin] = true;
+	double* Dist = new double[pnum]; int tem = 0;B[begin] = true;
 	for (int i = 0; i < pnum; ++i) {
 		Dist[i] = n.getlineById(begin, i);
 		if (Dist[i] > 0 && Dist[i] < DBL_MAX) {
 			S[i] = begin;
 		}
-		else
-		{
-			S[i] = -1;
-		}
+		else S[i] = -1;
 	}
-
 	for (int i = 0; i < pnum; ++i) {
 		double min = DBL_MAX;
 		for (int j = 0; j < pnum; ++j) {
@@ -153,16 +170,47 @@ void Dijkstra(mnet& n,int begin) {
 		}
 	}
 }
-	
-void returnstep(vector<int>& input, int a, string& result) {
-	if (input[a] == -1)return;
-	returnstep(input, input[a], result);
-	result = result + to_string(input[a]) + "->";
-}
-void returnstep(vector<int>& input, int a, vector<int>& pa) {
-	if (input[a] == -1)return;
-	returnstep(input, input[a], pa);
-	pa.push_back(input[a]);
+void Dijkstra(mnet& n, string begins) {
+	int begin = n.findByName(begins)->id;
+	int pnum = n.netpoint.size();//开始点号，总点数
+	vector<int> S, path; for (int i = 0; i < pnum; ++i)S.push_back(-1);
+	vector<bool>B; for (int i = 0; i < pnum; ++i)B.push_back(false);
+	double* Dist = new double[pnum]; int tem = 0; B[begin] = true;
+	for (int i = 0; i < pnum; ++i) {
+		Dist[i] = n.getlineById(begin, i);
+		if (Dist[i] > 0 && Dist[i] < DBL_MAX) {
+			S[i] = begin;
+		}
+		else S[i] = -1;
+	}
+	for (int i = 0; i < pnum; ++i) {
+		double min = DBL_MAX;
+		for (int j = 0; j < pnum; ++j) {
+			if (!B[j] && Dist[j] < min) {
+				tem = j; min = Dist[j];
+			}
+		}
+		B[tem] = true;
+		for (int j = 0; j < pnum; ++j) {
+
+			if (!B[j] && Dist[tem] + n.getlineById(tem, j) < Dist[j]) {
+				Dist[j] = Dist[tem] + n.getlineById(tem, j);
+				S[j] = tem;
+			}
+		}
+	}
+	for (int i = 0; i < pnum; ++i) {
+		string re = ""; path.clear();
+		if (i == begin)continue;
+		cout << "点" << n.findById(i)->name << "：";
+		if (Dist[i] == DBL_MAX)cout << "     无法到达\n";
+		else {
+			returnstep(S, i, path);
+			for (size_t i = 0; i < path.size(); ++i)re += n.findById(path[i])->name + "->";
+			re += n.findById(i)->name;
+			cout << re << "     距离：" << Dist[i] << endl;
+		}
+	}
 }
 void test() {
 	double max = DBL_MAX;

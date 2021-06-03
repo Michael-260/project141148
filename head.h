@@ -3,7 +3,7 @@
 #include <string>
 #include <vector>
 using namespace std;
-
+//自定义点类
 class mpoint {
 public:
 	int id;
@@ -31,6 +31,7 @@ public:
 		ida = a; idb = b; length = c;
 	}
 };
+//自定义网
 class mnet {
 public:
 	vector<mpoint> netpoint;
@@ -53,11 +54,23 @@ public:
 	void delpoint(int);
 	void addpoint(int, string,vector<int>&, vector<double>& );
 	void addpoint(int, vector<int>&, vector<double>&);
-	void addline(int, int, double);
+	void addline(int, int, double);//添加线（默认方法）
+	void addline(string, string, double);//添加线
 	void setpoint(int, vector<int>&, vector<double>&);
+	void setpoint(vector<string>&);
 	vector<mpoint>::iterator findMin(int id);
 };
-
-void Dijkstra(mnet&,int);
+//Dijkstra函数
+/*
+@param net 自定义网
+@param begin 开始点号（编号）
+*/
+void Dijkstra(mnet& net,int begin);
+/*
+@param net 自定义网
+@param begins 开始点号（点名）
+*/
+void Dijkstra(mnet& net, string begins);
 void returnstep(vector<int>&, int, string&);
+void returnstep(vector<int>&, int, vector<int>&);
 void test();
